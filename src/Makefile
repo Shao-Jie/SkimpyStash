@@ -1,22 +1,26 @@
-#UNAME := $(shell uname)
-#ifeq ($(UNAME),Linux)
-#	DEBUG = -g -rdynamic -ggdb -DDEBUG
-#else
-#	DEBUG -g -ggdb -DDEBUG
-#endif
+UNAME := $(shell uname)
+ifeq ($(UNAME),Linux)
+	DEBUG = -g -rdynamic -ggdb -DDEBUG
+else
+	DEBUG -g -ggdb -DDEBUG
+endif
 CC = g++
-CFLAGS = -C -wALL $(DEBUG)
+CFLAGS = -C -WALL $(DEBUG)
 
 LIB_OBJS =   \
 	./database.o \
 	./hashtable.o \
-	./log.o
+	./log.o      \
+	./hashfuns.o \
+	./bloomfilter.o
 
 TEST_OBJS =  \
-	./test.o
+	./test.o  \
+	./testbloom.o
 
 TESTS = \
-	./test
+	./test \
+	./testbloom
 LIBRARY = libskipmpystash.a
 
 all: $(LIBRARY)
@@ -33,3 +37,5 @@ $(LIBRARY): $(LIB_OBJS)
 
 test: ./test.o $(TEST_OBJS) $(LIB_OBJS)
 	$(CC) ./test.o $(SVR_OBJS) $(LIB_OBJS) -o $@
+testbloom: ./testbloom.o $(TEST_OBJS) $(LIB_OBJS)
+	$(CC) ./testbloom.o $(SVR_OBJS) $(LIB_OBJS) -o $@

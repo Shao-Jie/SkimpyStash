@@ -1,3 +1,9 @@
+//
+// test.cpp
+// Author: Jie Shao
+// Email : jsshaojie@gmail.com
+//
+ 
 #include <cstdio>
 #include <iostream>
 #include <unistd.h>
@@ -10,17 +16,29 @@
 using namespace std;
 int main()
 {
-	struct DataBase *db = new DataBase("test");
+	class DataBase *db = new DataBase("test");
 	char value[VSIZE];
 	RC rc;
-	db->AddData("aaa","bbb");
-	db->AddData("aaa","ccc");
-//	db->DeleteData("aaa");
-	if (db->FindData("aaa",value) ==OK){
-		cout<<"result " <<value<<endl;
+	db->AddData("aaaa","bbb");
+	db->AddData("yyyyy","ccc");
+	db->DeleteData("aaaa");
+	if (db->FindData("aaaa",value) ==OK){
+		__DEBUG("the key value pair , the key is %s,value is %s","aaaa",value);
 	}else{
-		cout <<"not find this value!"<<endl;
+		__DEBUG("not find this value! The key is %s","aaaa");
+	}
+
+	if (db->FindData("yyyyy",value) ==OK){
+		__DEBUG("the key value pair , the key is %s,value is %s","yyyyy",value);
+	}else{
+		__DEBUG("not find this value! The key is %s","aaaa");
+	}	
+
+	if (db->FindData("xxx",value) ==OK){
+		__DEBUG("the key value pair , the key is %s,value is %s","xxx",value);
+	}else{
+		__DEBUG("not find this value! The key is %s","xxx");
 	}	
 //	db->AddData("aaa","bbb");
-
+	return 0;
 }

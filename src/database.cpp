@@ -1,3 +1,9 @@
+//
+// database.cpp
+// Author: Jie Shao
+// Email : jsshaojie@gmail.com
+//
+
 #include <cstdio>
 #include <iostream>
 #include <unistd.h>
@@ -27,17 +33,16 @@ DataBase::~DataBase()
 RC DataBase::AddData(const char *key, const char *value)
 {
 	struct slice *kv;
-//	cout << "key is "<<key<<",value is "<<value<<endl;
 	kv = (struct slice *)malloc(sizeof(struct slice));
 	memset(kv->Key,0,KSIZE);
 	memset(kv->Value,0,VSIZE);
-	snprintf(kv->Key,KSIZE,key);
+	snprintf(kv->Key,KSIZE,key); // cannot use memcpy,if this key or value not allocate space first,memcpy will wrong.
 	snprintf(kv->Value,VSIZE,value);
 //	memcpy(kv->Key,key,KSIZE);
 //	memcpy(kv->Value,value,VSIZE);
-	kv->op = ADD;
-	hashtable->Insert(kv);
-	return hashtable->Insert(kv);
+	kv->op = ADD;                // define this operation is ADD
+//	hashtable->Insert(kv); 
+	return hashtable->Insert(kv); // insert the slice in hashtable.
 }
 
 RC DataBase::DeleteData(char *key)
@@ -48,7 +53,7 @@ RC DataBase::DeleteData(char *key)
 	memset(kv->Value,0,VSIZE);
 	snprintf(kv->Key,KSIZE,key);
 //	memcpy(kv->Key,key,KSIZE);
-	kv->op = DELETE;	
+	kv->op = DELETE;	              // define this operation is DELETE
   return hashtable->Insert(kv);
 }
 

@@ -1,3 +1,9 @@
+//
+// log.cpp
+// Author: Jie Shao
+// Email : jsshaojie@gmail.com
+// 
+
 #include <cstdio>
 #include <iostream>
 #include <unistd.h>
@@ -9,12 +15,12 @@
 #include "skimpystash.h"
 
 using namespace std;
-Log::Log(const char *fileName)
+Log::Log(const char *fileName) // create db.
 {
 	char db_name[MAXNAME];
 	memset(db_name,0,MAXNAME);
 	snprintf(db_name,MAXNAME,"%s.db",fileName);
-	if(_file_exists() != OK){
+	if(_file_exists() != OK){ 
 		unlink(db_name);
 	}
 	memcpy(DBName,db_name,MAXNAME);
@@ -35,9 +41,9 @@ int Log::Getfd()
 RC Log::_file_exists()
 {
 	int fd = open(DBName,O_RDWR);
-	if(fd > -1){
+	if(fd > -1){ // if file exists, need recove it!
 		close(fd);
-		cout <<"file exists! need do something to recove!"<<endl;
+		__DEBUG("file exists! need do something to recove!");
 		return WARN_FILE_EXISTS;
 	}
 	return OK;
