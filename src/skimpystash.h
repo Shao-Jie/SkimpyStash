@@ -38,11 +38,6 @@
 
 #define MAXNAME 24
 
-// define operation type add or delete
-enum OpType{
-	ADD,
-	DELETE
-};
 
 #ifndef FALSE
 #define FALSE 0
@@ -76,14 +71,24 @@ typedef int RC;
 #define DATA_NOFIND            5
 #define HASH_NUM_ZERO          6
 
+// define operation type add or delete
+enum OpType{
+	ADD,
+	DELETE
+};
+
 //
 // define data struct
 //
 
+struct fileHdr{
+	int pageNum;
+};
+
 struct slice{
-	char Key[KSIZE];
-	char Value[VSIZE];
-	LLINT offset;
+	char key[KSIZE];
+	char value[VSIZE];
+	int pageNum;
 	int op;
 };
 
@@ -138,8 +143,10 @@ private:
 	int Hash(char *key)const; // The hash function used/
 	int fd;
 	int numBuckets; // slot
-	LLINT *offsetMap; // defined as offsetMap[numBuckets]_offset,
+	int *pageNumMap; // defined as pageNumMap[numBuckets]_pageNum,
+	int pageSize;
 	class BloomFilter *bloom; // using bloomfilter to speedup read operator
+	struct fileHdr *header;
 };
 
 

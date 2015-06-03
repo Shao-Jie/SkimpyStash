@@ -34,12 +34,12 @@ RC DataBase::AddData(const char *key, const char *value)
 {
 	struct slice *kv;
 	kv = (struct slice *)malloc(sizeof(struct slice));
-	memset(kv->Key,0,KSIZE);
-	memset(kv->Value,0,VSIZE);
-	snprintf(kv->Key,KSIZE,key); // cannot use memcpy,if this key or value not allocate space first,memcpy will wrong.
-	snprintf(kv->Value,VSIZE,value);
-//	memcpy(kv->Key,key,KSIZE);
-//	memcpy(kv->Value,value,VSIZE);
+	memset(kv->key,0,KSIZE);
+	memset(kv->value,0,VSIZE);
+	snprintf(kv->key,KSIZE,key); // cannot use memcpy,if this key or value not allocate space first,memcpy will wrong.
+	snprintf(kv->value,VSIZE,value);
+//	memcpy(kv->key,key,KSIZE);
+//	memcpy(kv->value,value,VSIZE);
 	kv->op = ADD;                // define this operation is ADD
 //	hashtable->Insert(kv); 
 	return hashtable->Insert(kv); // insert the slice in hashtable.
@@ -49,10 +49,10 @@ RC DataBase::DeleteData(char *key)
 {
 	struct slice *kv;
 	kv = (struct slice *)malloc(sizeof(struct slice));
-	memset(kv->Key,0,KSIZE);
-	memset(kv->Value,0,VSIZE);
-	snprintf(kv->Key,KSIZE,key);
-//	memcpy(kv->Key,key,KSIZE);
+	memset(kv->key,0,KSIZE);
+	memset(kv->value,0,VSIZE);
+	snprintf(kv->key,KSIZE,key);
+//	memcpy(kv->key,key,KSIZE);
 	kv->op = DELETE;	              // define this operation is DELETE
   return hashtable->Insert(kv);
 }
