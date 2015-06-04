@@ -42,11 +42,15 @@ BloomFilter::~BloomFilter()
 
 RC BloomFilter::InsertBloomFilter(char *str)
 {
+#ifndef USEBLOOMFILTER
+	return OK;
+#endif
 	this->hashFuns->GenerateHashValue(str,this->hashFunsRet); // call HashFuns generateHashValue
 	for(int i = 0;i< this->hashFunsNum;i++){
 		unsigned int pos = (this->hashFunsRet[i]%this->numBuckets); // get every hash pos
 		InsertBitMap(i,pos);
 	}
+	return OK;
 }
 
 RC BloomFilter::InsertBitMap(int index,unsigned int pos)
@@ -57,11 +61,14 @@ RC BloomFilter::InsertBitMap(int index,unsigned int pos)
 
 bool BloomFilter::IsContain(char*str)
 {
+#ifndef USEBLOOMFILTER
+	return true;
+#endif
 	this->hashFuns->GenerateHashValue(str,this->hashFunsRet); // generateHashValue use this key
 	for(int i = 0;i< this->hashFunsNum;i++){
 		unsigned int pos = (this->hashFunsRet[i]%this->numBuckets);
 		if(FindBitMap(i,pos)==false){
-			__DEBUG("no this key %s,retunrn when i is %d",str,i);
+	//		__DEBUG("no this key %s,retunrn when i is %d",str,i);
 			return false;
 		}
 	}

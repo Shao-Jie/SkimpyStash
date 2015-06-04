@@ -7,8 +7,6 @@
 #ifndef SKIMPYSTASH_H
 #define SKIMPYSTASH_H
 
-//#include <sys/types.h>
-//#include <unistd.h>
 
 // Globally-useful defines
 //
@@ -30,6 +28,10 @@
 	#define __DEBUG(x...)
 #endif
 
+#define USEBUFFER
+
+#define USEBLOOMFILTER
+
 #define HASH_M 249997
 
 #define KSIZE 30
@@ -38,6 +40,7 @@
 
 #define MAXNAME 24
 
+#define BUFFERNUM 500
 
 #ifndef FALSE
 #define FALSE 0
@@ -92,6 +95,15 @@ struct slice{
 	int op;
 };
 
+struct BufPageDesc{
+	int prev;
+};
+
+struct HashDesc{
+	int pageNum;
+	int bufferNum;
+};
+
 // define hash funs used by bloom filter
 class HashFuns{
 public:
@@ -139,14 +151,20 @@ public:
 	~HashTable();
 	RC Insert(struct slice*kv); // insert this slice
 	RC Find (char*key,char *value); // find this value using key.
+	RC InsertBuffer(struct slice*kv); // insert buffer first
+	RC FindBuffer(char*key,char *value); // if we use InsertBuffer,we should find it in buffer first.
+	RC Close();
 private:
 	int Hash(char *key)const; // The hash function used/
 	int fd;
 	int numBuckets; // slot
-	int *pageNumMap; // defined as pageNumMap[numBuckets]_pageNum,
-	int pageSize;
+	int pageSize; // each page size equal sizeof(struct slice)
+	int bufIndex; // the num of buffer have used.
+	struct HashDesc *hashMap; // use hashDesc instead of pageNumMap
 	class BloomFilter *bloom; // using bloomfilter to speedup read operator
 	struct fileHdr *header;
+	char *buffer;
+	struct BufPageDesc *bufTable;
 };
 
 
@@ -171,7 +189,7 @@ public:
 	RC AddData(const char *key,const char*value); // add data,simple use key,value
 	RC DeleteData(char *key); // delete data,index by key
 	RC FindData(char *key,char *value); // find data, index by key
-	RC CloseDB(); // not used.
+	RC CloseDB();  
 private:
 	int fd;
 	Log *log;

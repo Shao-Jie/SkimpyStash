@@ -22,6 +22,15 @@ int main()
 	db->AddData("aaaa","bbb");
 	db->AddData("yyyyy","ccc");
 	db->DeleteData("aaaa");
+	db->AddData("aaaa","bbb");
+	db->AddData("yyyyy","ccc");
+	db->DeleteData("aaaa");
+	db->AddData("aaaa","bbb");
+	db->AddData("yyyyy","ccc");
+	db->DeleteData("aaaa");
+	db->AddData("aaaa","bbb");
+	db->AddData("yyyyy","ccc");
+	db->DeleteData("aaaa");
 	if (db->FindData("aaaa",value) ==OK){
 		__DEBUG("the key value pair , the key is %s,value is %s","aaaa",value);
 	}else{
@@ -39,6 +48,6 @@ int main()
 	}else{
 		__DEBUG("not find this value! The key is %s","xxx");
 	}	
-//	db->AddData("aaa","bbb");
+	db->CloseDB();
 	return 0;
 }

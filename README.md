@@ -4,7 +4,7 @@ This idea is from this paper,"SkimpyStash  RAM Space Skimpy Key-Value Store on F
 This key-value dabase mainly uses hashtable.
 It will be constructed by hashtable,bloom filter,cache component etc.
 
-now I realized hashtable component and bloom filter component.
+now I realized hashtable component, bloom filter component and write buffer.
 
 Author: Jie Shao
 

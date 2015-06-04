@@ -41,8 +41,11 @@ RC DataBase::AddData(const char *key, const char *value)
 //	memcpy(kv->key,key,KSIZE);
 //	memcpy(kv->value,value,VSIZE);
 	kv->op = ADD;                // define this operation is ADD
-//	hashtable->Insert(kv); 
+#ifdef USEBUFFER
+	return hashtable->InsertBuffer(kv);
+#else
 	return hashtable->Insert(kv); // insert the slice in hashtable.
+#endif
 }
 
 RC DataBase::DeleteData(char *key)
@@ -54,12 +57,25 @@ RC DataBase::DeleteData(char *key)
 	snprintf(kv->key,KSIZE,key);
 //	memcpy(kv->key,key,KSIZE);
 	kv->op = DELETE;	              // define this operation is DELETE
+#ifdef USEBUFFER
+	return hashtable->InsertBuffer(kv);
+#else
   return hashtable->Insert(kv);
+#endif
 }
 
 RC DataBase::FindData(char *key,char *value)
 {
 	char _key[KSIZE];
 	snprintf(_key,KSIZE,key);
+#ifdef USEBUFFER
+	return hashtable->FindBuffer(_key,value);
+#else
 	return hashtable->Find(_key,value);
+#endif
+
+}
+RC DataBase::CloseDB()
+{
+	return hashtable->Close();
 }
