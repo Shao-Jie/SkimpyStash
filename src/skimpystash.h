@@ -40,7 +40,7 @@
 
 #define MAXNAME 24
 
-#define BUFFERNUM 500
+#define BUFFERNUM  7000
 
 #ifndef FALSE
 #define FALSE 0

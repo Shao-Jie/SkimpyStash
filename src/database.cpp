@@ -36,7 +36,7 @@ RC DataBase::AddData(const char *key, const char *value)
 	kv = (struct slice *)malloc(sizeof(struct slice));
 	memset(kv->key,0,KSIZE);
 	memset(kv->value,0,VSIZE);
-	snprintf(kv->key,KSIZE,key); // cannot use memcpy,if this key or value not allocate space first,memcpy will wrong.
+	snprintf(kv->key,KSIZE,key); // cannot use memcpy,if this key or value not allocate space first,memcpy will be wrong.
 	snprintf(kv->value,VSIZE,value);
 //	memcpy(kv->key,key,KSIZE);
 //	memcpy(kv->value,value,VSIZE);

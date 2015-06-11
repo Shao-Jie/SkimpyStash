@@ -75,7 +75,7 @@ RC HashTable::InsertBuffer(struct slice *kv)
 
 	if (bufIndex == BUFFERNUM - 1){ // now the buffer is full.
 		// start write the buffer data to file
-		lseek(fd,(header->pageNum - BUFFERNUM + 1)*pageSize,SEEK_SET);
+		lseek(fd,(header->pageNum - BUFFERNUM)*pageSize,SEEK_SET);
 		write(fd,buffer,pageSize*BUFFERNUM);
 
 		// clear zeor,maybe need not, because,we will rewrite it.
@@ -85,6 +85,7 @@ RC HashTable::InsertBuffer(struct slice *kv)
 			bufTable[i].prev = -1;
 		}
 		bufIndex = 0;
+		
 		for(i = 0; i< this->numBuckets; i++){
 			hashMap[i].bufferNum = -1;			
 		}
@@ -131,6 +132,8 @@ RC HashTable::FindBuffer(char *str,char *value)
 	}
 	struct slice *newkv;
 	newkv = (struct slice *)malloc(sizeof(struct slice));
+	struct slice *_kv;
+	_kv = (struct slice *)malloc(sizeof(struct slice));
 	int pageNum = hashMap[bucket].pageNum;
 	int bufferNum = hashMap[bucket].bufferNum;
 	while(true){ // first search in buffer
@@ -138,38 +141,48 @@ RC HashTable::FindBuffer(char *str,char *value)
 			break;
 		}
 		newkv = (struct slice*)&buffer[bufferNum*pageSize];// get the slice in this position.
-		if(strcmp(newkv->key,str) == 0){
-			if(newkv->op == DELETE){
+		memcpy(_kv->key,newkv->key,KSIZE); // if we operate newkv directly,may have change the value of buffer
+		memcpy(_kv->value,newkv->value,VSIZE);
+		_kv->op = newkv->op;
+		_kv->pageNum = newkv->pageNum;
+		if(strcmp(_kv->key,str) == 0){
+			if(_kv->op == DELETE){
 				return DATA_DELETE;
 			}else{
-				memcpy(value,newkv->value,VSIZE);
+				memcpy(value,_kv->value,VSIZE);
 				return OK;
 			}
 		}
-	//	__DEBUG("the buffer page num is %d,the key is %s the value is %s,the op is %d",pageNum,newkv->key,newkv->value,newkv->op);
-		pageNum = newkv->pageNum;
+//		__DEBUG("the buffer page num is %d,the key is %s the value is %s,the op is %d\n",pageNum,_kv->key,_kv->value,_kv->op);
+		pageNum = _kv->pageNum;
 		bufferNum = bufTable[bufferNum].prev;
 	}
+
 	while(true){ // next search in disk file
 		if(pageNum < 0){ // we cannot find in disk 
 			return DATA_NOFIND;
 		}
+		if(pageNum == 0)
+		{
+			int x;
+			scanf("%d",&x);
+		}
 		lseek(fd,pageNum*pageSize,SEEK_SET);
-		if (read(fd,newkv,pageSize) != pageSize)
+		if (read(fd,_kv,pageSize) != pageSize)
 		{
 			__DEBUG("In hashtable Find,read err!");
 			return ERR_READ;
 		}
-		if (strcmp(newkv->key,str)==0){
-			if (newkv->op == DELETE){ // this data has been delete.
+		if (strcmp(_kv->key,str)==0){
+			if (_kv->op == DELETE){ // this data has been delete.
 				return DATA_DELETE;
 			}else{ // we find this data
-				memcpy(value,newkv->value,VSIZE);  // set the value and return it(use index).
+				memcpy(value,_kv->value,VSIZE);  // set the value and return it(use index).
 				return OK;
 			}
 		}
 //		__DEBUG("the page num is %d,the key is %s the value is %s,the op is %d",pageNum,newkv->key,newkv->value,newkv->op);
-		pageNum = newkv->pageNum;
+		pageNum = _kv->pageNum;
 	}
 	return ERR;
 }
