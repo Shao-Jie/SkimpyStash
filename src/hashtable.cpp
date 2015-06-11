@@ -180,11 +180,6 @@ RC HashTable::FindBuffer(char *str,char *value)
 		if(pageNum < 0){ // we cannot find in disk 
 			return DATA_NOFIND;
 		}
-		if(pageNum == 0)
-		{
-			int x;
-			scanf("%d",&x);
-		}
 		lseek(fd,pageNum*pageSize,SEEK_SET);
 		if (read(fd,_kv,pageSize) != pageSize)
 		{
