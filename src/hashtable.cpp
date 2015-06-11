@@ -76,7 +76,18 @@ RC HashTable::InsertBuffer(struct slice *kv)
 	if (bufIndex == BUFFERNUM - 1){ // now the buffer is full.
 		// start write the buffer data to file
 		lseek(fd,(header->pageNum - BUFFERNUM)*pageSize,SEEK_SET);
-		write(fd,buffer,pageSize*BUFFERNUM);
+		if(write(fd,buffer,pageSize*BUFFERNUM) != pageSize*BUFFERNUM)
+	  {
+			__DEBUG("In hashtabe Insertbuffer,write err!");
+		  return ERR_WRITE;
+		}
+#ifdef USEFSYNC
+		if(fsync(fd) != 0)
+		{
+			__DEBUG("fsync error!");
+			return ERR_FSYNC;
+		}
+#endif
 
 		// clear zeor,maybe need not, because,we will rewrite it.
 		memset(buffer,0,pageSize*BUFFERNUM);
@@ -115,6 +126,13 @@ RC HashTable::Insert(struct slice *kv)
 		__DEBUG("In hashtabe Insert,write err!");
 	  return ERR_WRITE;
 	}
+#ifdef USEFSYNC
+		if(fsync(fd) != 0)
+		{
+			__DEBUG("fsync error!");
+			return ERR_FSYNC;
+		}
+#endif
 	return OK;
 }
 
@@ -231,6 +249,18 @@ RC HashTable::Close()
 {
 	lseek(fd,(header->pageNum - bufIndex)*pageSize,SEEK_SET);
 	write(fd,buffer,pageSize*bufIndex);
+	if(write(fd,buffer,pageSize*bufIndex) != pageSize*bufIndex)
+	{
+		__DEBUG("In hashtabe Insertbuffer,write err!");
+	  return ERR_WRITE;
+	}
+#ifdef USEFSYNC
+	if(fsync(fd) != 0)
+	{
+		__DEBUG("fsync error!");
+		return ERR_FSYNC;
+	}
+#endif
 	close(fd);
 	return OK;
 }

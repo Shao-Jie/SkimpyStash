@@ -31,6 +31,7 @@
 #define USEBUFFER
 
 #define USEBLOOMFILTER
+#define USEFSYNC
 
 #define HASH_M 249997
 
@@ -66,6 +67,7 @@ typedef int RC;
 #define ERR_HASH             (-2) 
 #define ERR_WRITE            (-3)
 #define ERR_READ             (-4)
+#define ERR_FSYNC            (-5)
 
 #define WARN                   1
 #define WARN_FILE_EXISTS       2

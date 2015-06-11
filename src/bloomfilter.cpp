@@ -68,7 +68,7 @@ bool BloomFilter::IsContain(char*str)
 	for(int i = 0;i< this->hashFunsNum;i++){
 		unsigned int pos = (this->hashFunsRet[i]%this->numBuckets);
 		if(FindBitMap(i,pos)==false){
-			__DEBUG("no this key %s,retunrn when i is %d",str,i);
+//			__DEBUG("no this key %s,retunrn when i is %d",str,i);
 			return false;
 		}
 	}
